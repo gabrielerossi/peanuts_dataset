@@ -41,9 +41,8 @@ class Scraper:
         :param max_workers: Number of threads.
         :return: A list of URLs.
         """
-        
-        results = self.scrape_multi_threaded(
-            urls, self.get_asset_url, max_workers)
+
+        results = self.scrape_multi_threaded(urls, self.get_asset_url, max_workers)
         print(results)
         if out_file:
             json.dump(results, open(out_file, "w+"))
@@ -67,8 +66,7 @@ class Scraper:
         :return: List of raw image arrays.
         """
 
-        results = self.scrape_multi_threaded(
-            urls, self.get_image_from_url, max_workers)
+        results = self.scrape_multi_threaded(urls, self.get_image_from_url, max_workers)
         return results
 
     @staticmethod
@@ -80,19 +78,14 @@ class Scraper:
         :return: Results of calling the handler on all URLs.
         """
         results = []
-        for url in urls:
-            start_time_check = time.time()
-            response = requests.head(url)
-            tmp = response.status_code == 200
-            end_time_check = time.time()
-            execution_time_check = end_time_check - start_time_check
-            print("The execution time for url check was {} seconds.".format(execution_time_check))
-            if (tmp):
-                start_time_get = time.time()
-                results.append(handler(url))
-                end_time_get = time.time()
-                execution_time_get = end_time_get - start_time_get
-                print("The execution time for get url was {} seconds.".format(execution_time_get))
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36"
+        }
+        for url in tqdm(urls):
+            # response = requests.head(url)
+            # tmp = response.status_code == 200
+            # if tmp:
+            results.append(handler(url, headers))
 
         return results
 
@@ -119,8 +112,9 @@ class Scraper:
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = list()
             for url, path in tqdm(zip(urls, paths)):
-                futures.append(executor.submit(
-                    self.save_image_from_url, conf=(path, url)))
+                futures.append(
+                    executor.submit(self.save_image_from_url, conf=(path, url))
+                )
                 time.sleep(10)
 
             results = list()
@@ -157,7 +151,7 @@ class Scraper:
             for url in urls:
                 response = requests.head(url)
                 tmp = response.status_code == 200
-                if (tmp):
+                if tmp:
                     futures.append(executor.submit(handler, url=url))
                     print(futures)
                     time.sleep(10)
@@ -171,27 +165,34 @@ class Scraper:
             return results
 
     @staticmethod
-    def get_asset_url(url):
+    def get_asset_url(url, headers):
         """
         Retrieves image asset URL by using the 'twitter:image' tag.
         :param url: URL to a page containing the image.
         :return: URL to the image asset.
         """
         # try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'}
+        # headers = {
+        #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36"
+        # }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            print(url)
-            soup = BeautifulSoup(response.content, "html.parser")
-            #comic = soup.find('meta', {'name': 'twitter:image'})
-            #image_url = comic["content"]
-            image_tag = soup.find('picture', class_='item-comic-image')
-            image_url = image_tag.find('img', class_='lazyload img-fluid')
-            source_url = image_url['src']
-            return source_url
-        else:
-            return None
+            return (
+                BeautifulSoup(response.content, "html.parser")
+                .find("picture", class_="item-comic-image")
+                .find("img", class_="lazyload img-fluid")["src"]
+            )
+            # print(url)
+            # soup = BeautifulSoup(response.content, "html.parser").
+            # image_tag = soup.find("picture", class_="item-comic-image").find(
+            #    "img", class_="lazyload img-fluid"
+            # )["src"]
+
+            # image_url = image_tag.find("img", class_="lazyload img-fluid")
+            # source_url = image_tag["src"]
+            # return image_tag
+        # else:
+        #     return None
 
     @staticmethod
     def get_image_from_url(url):
@@ -202,9 +203,9 @@ class Scraper:
         """
         try:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'}
-            im = Image.open(requests.get(
-                url, headers=headers, stream=True).raw)
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36"
+            }
+            im = Image.open(requests.get(url, headers=headers, stream=True).raw)
             return im
         except:
             print(f"ERROR: Unable to retrieve image from URL: {url}.")
