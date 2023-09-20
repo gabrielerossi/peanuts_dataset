@@ -42,8 +42,8 @@ def main():
     # Create an instance of the Scraper class
     scraper = Scraper()
 
-    start_date = "2023/01/01"
-    end_date = "2023/09/18"
+    start_date = "2023/09/10"
+    end_date = "2023/09/20"
 
     urls = generate_urls(start_date, end_date)
 
