@@ -55,15 +55,17 @@ def resize_img(cv2, path, output_path):
 
 if __name__ == "__main__":
     # get transcriptions
-    create_dir(no_text)
-    ocr = OCR("tesseract")
+    # create_dir(no_text)
+    # ocr = OCR("tesseract")
     splitted_images_paths = [os.path.join(splitted_images, file) for file in os.listdir(splitted_images)]
-    transcriptions = ocr.extract_text(splitted_images_paths, clustering=True)
+    # transcriptions = ocr.extract_text(splitted_images_paths, rescale=True, binarize=True, clustering=True, autocorrect=True)
     
-    for image, words in transcriptions.items():
-        no_text_img = ocr.remove_text(image, words)
-        output = no_text + os.path.basename(image)
-        cv2.imwrite(output, no_text_img)
+    # for image, words in transcriptions.items():
+    #     no_text_img = ocr.remove_text(image, words)
+    #     img_rgb = cv2.cvtColor(no_text_img, cv2.COLOR_BGR2RGB)
+    #     output = no_text + os.path.basename(image)
+        
+    #     cv2.imwrite(‘text_free_image.jpg’,img_rgb)
 
     # create_dir(resized)
     # # save and visualize
@@ -82,3 +84,23 @@ if __name__ == "__main__":
     #     check_img(path)
     #     resize_img(cv2, path, resized)
     
+    # get transcriptions
+    ocr = OCR("tesseract")
+    transcriptions = ocr.extract_text(splitted_images_paths, clustering=True)
+
+    create_dir(no_text)
+    # save and visualize
+    for path in splitted_images_paths:
+    #for path in [os.path.join(no_text, file) for file in os.listdir(no_text)]:
+        img = cv2.imread(path)
+        head, tail = os.path.split(path)
+        words = transcriptions[path][0]
+        bbox = transcriptions[path][1]
+        wds = words.split(" ")
+        img = inpaint_text(img)
+        
+        cv2.imwrite(os.path.join(no_text, tail), img)
+        cv2.imshow("image", img)
+        cv2.waitKey(0)
+        check_img(path)
+        resize_img(cv2, path, '../../data/resized/')

@@ -99,7 +99,7 @@ def aggl_cluster(bboxes):
     for i in range(n):
         for j in range(n):
             distances[i, j] = distance(bboxes[i], bboxes[j])
-    cluster = AgglomerativeClustering(n_clusters=None, distance_threshold=tolerance, affinity='precomputed',
+    cluster = AgglomerativeClustering(n_clusters=None, distance_threshold=tolerance, metric='euclidean',
                                       linkage='single')
     cluster.fit(distances)
     return cluster.labels_

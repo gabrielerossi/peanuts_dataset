@@ -40,6 +40,7 @@ class TesseractOCR:
         :param words: words to remove
         :return: cleaned image
         """
+        print (image)
         img = cv2.imread(image)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
@@ -53,7 +54,6 @@ class TesseractOCR:
             ROI = thresh[y:y+h, x:x+w]
             data = tess.image_to_string(ROI, lang='eng',config='--psm 6').lower()
             if words[0] in data:
-                print(words[0])
                 img[y:y+h, x:x+w] = [255,255,255]
         
         return img

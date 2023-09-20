@@ -59,7 +59,6 @@ class OCR:
             sub_result.append(words)
             result[path] = sub_result
 
-        print(result)
         return result
 
     def remove_text(self, image, words):
