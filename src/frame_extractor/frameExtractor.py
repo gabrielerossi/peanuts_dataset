@@ -27,10 +27,11 @@ class FrameExtractor:
             bboxes = self.extract_panels(path, iterations, thresh_type)
             for i, bbox in enumerate(bboxes):
                 (x1, y1), (x2, y2) = bbox
-                panel = img[y1:y2, x1:x2]
-                out_path = f"{out_directory}/{id}_{i}.png"
-                cv2.imwrite(out_path, panel)
-                out_paths.append(out_path)
+                if (x2 - x1) < 500:
+                    panel = img[y1:y2, x1:x2]
+                    out_path = f"{out_directory}/{id}_{i}.png"
+                    cv2.imwrite(out_path, panel)
+                    out_paths.append(out_path)
         return out_paths
 
     def extract_panels(self, image_path, iterations, thresh_type):

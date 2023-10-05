@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 from frame_extractor.frameExtractor import FrameExtractor
 import datetime
 import cv2
@@ -13,8 +14,8 @@ from PIL import Image
 
 full_images = "../data/stripes/"
 splitted_images = "../data/frame/"
-no_text = "../../data/notext/"
-resized = "../../data/resized/"
+no_text = "../data/notext/"
+resized = "../data/resized/"
 
 
 def generate_urls(start_date, end_date):
@@ -92,18 +93,26 @@ def resize_img(cv2, path, output_path):
 
 def main():
     # Create an instance of the Scraper class
+    create_dir(full_images)
     scraper = Scraper()
 
-    start_date = "2023/09/10"
+    start_date = "2023/09/16"
     end_date = "2023/09/17"
 
-    urls = generate_urls(start_date, end_date)
+    urls = []
+    paths = []
+    for date in _generate_dates(start_date, end_date):
+        urls.append(f"https://www.gocomics.com/peanuts/{date}")
+        date_str = re.sub(r"/", "_", date)
+        paths.append(f"../data/stripes/{date_str}.png")
+
+    #urls = generate_urls(start_date, end_date)
 
     image_urls = scraper.get_asset_urls(urls)
 
-    paths = []
-    for i in range(len(image_urls)):
-        paths.append(f"../data/stripes/peanuts_{i}.png")
+    # paths = []
+    # for i in range(len(image_urls)):
+    #     paths.append(f"../data/stripes/peanuts_{i}.png")
 
     scraper.scrape_and_save_singlethreaded(image_urls, paths)
     # extract frame from each full illustration
@@ -139,7 +148,7 @@ def main():
         # cv2.imshow("image", img)
         # cv2.waitKey(0)
         check_img(no_text)
-        resize_img(cv2, no_text + os.path.basename(path), "../../data/resized/")
+        resize_img(cv2, no_text + os.path.basename(path), "../data/resized/")
 
 
 if __name__ == "__main__":
