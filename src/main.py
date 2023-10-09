@@ -96,8 +96,8 @@ def main():
     create_dir(full_images)
     scraper = Scraper()
 
-    start_date = "2023/09/16"
-    end_date = "2023/09/17"
+    start_date = "2023/09/18"
+    end_date = "2023/09/20"
 
     urls = []
     paths = []
@@ -106,7 +106,7 @@ def main():
         date_str = re.sub(r"/", "_", date)
         paths.append(f"../data/stripes/{date_str}.png")
 
-    #urls = generate_urls(start_date, end_date)
+    # urls = generate_urls(start_date, end_date)
 
     image_urls = scraper.get_asset_urls(urls)
 
@@ -116,19 +116,19 @@ def main():
 
     scraper.scrape_and_save_singlethreaded(image_urls, paths)
     # extract frame from each full illustration
-    full_images_paths = [
-        os.path.join(full_images, file) for file in os.listdir(full_images)
-    ]
+    # full_images_paths = [
+    #     os.path.join(full_images, file) for file in os.listdir(full_images)
+    # ]
     create_dir(splitted_images)
     splitted_images_directory = splitted_images
     frame_extractor = FrameExtractor()
     splitted_images_paths = frame_extractor.extract_and_save_panels(
-        full_images_paths, splitted_images_directory
+        paths, splitted_images_directory
     )
 
-    splitted_images_paths = [
-        os.path.join(splitted_images, file) for file in os.listdir(splitted_images)
-    ]
+    # splitted_images_paths = [
+    #     os.path.join(splitted_images, file) for file in os.listdir(splitted_images)
+    # ]
 
     ocr = OCR("tesseract")
     transcriptions = ocr.extract_text(splitted_images_paths, clustering=True)

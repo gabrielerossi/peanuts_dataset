@@ -10,7 +10,7 @@ from text_extractor.VisionOCR import VisionOCR
 class OCR:
     # tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     tesseract_path = (
-        r"C:/Users/gabri/AppData/Local/Programs/Tesseract-OCR/tesseract.exe"
+        r"C:/Users/domenico.iavarone/AppData/Local/Programs/Tesseract-OCR/tesseract.exe"
     )
     cloud_credentials = "../../credentials/credentials.json"
 
