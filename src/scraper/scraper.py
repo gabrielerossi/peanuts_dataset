@@ -128,13 +128,14 @@ class Scraper:
         :param urls: URLs to scrape.
         :param paths: Paths where the results should be saved.
         """
-        paths = []
+        
         for url, path in tqdm(zip(urls, paths)):
             self.save_image_from_url((path, url))
 
     def save_image_from_url(self, conf):
         path, url = conf
         im = self.get_image_from_url(url)
+        print(path)
         if im:
             im.save(path)
 

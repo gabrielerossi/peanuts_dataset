@@ -10,7 +10,7 @@ from text_extractor.VisionOCR import VisionOCR
 class OCR:
     # tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     tesseract_path = (
-        r"C:/Users/domenico.iavarone/AppData/Local/Programs/Tesseract-OCR/tesseract.exe"
+        r"C:/Users/gabri/AppData/Local/Programs/Tesseract-OCR/tesseract.exe"
     )
     cloud_credentials = "../../credentials/credentials.json"
 
@@ -43,7 +43,7 @@ class OCR:
         result = {}
         for path in tqdm(img_paths):
             sub_result = []
-            image = cv2.imread(path)
+            image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
             if rescale:
                 image = rescale_for_ocr(image, self.tesseract_path)
